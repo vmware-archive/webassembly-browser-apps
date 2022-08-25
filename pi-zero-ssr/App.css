@@ -1,0 +1,147 @@
+/*
+ * Copyright 2022 VMware, Inc.
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
+@charset "UTF-8";
+/**
+ * This file iss the entrypoint to generate the different
+ * styles. It doesn't include any specific CSS rule, but
+ * all the import statements.
+ **/
+@font-face {
+  font-display: swap;
+  font-family: "ClarityCity";
+  font-style: normal;
+  font-weight: 400;
+  src: url(/assets/fonts/ClarityCity-Regular.woff2) format("woff2");
+}
+@font-face {
+  font-display: swap;
+  font-family: "ClarityCity";
+  font-style: normal;
+  font-weight: 800;
+  src: url(/assets/fonts/ClarityCity-Bold.woff2) format("woff2");
+}
+/* Light theme and default values */
+:root {
+  --font-family: "ClarityCity", -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+  /* 68 * 16 (base) = 1088px */
+  --content-width: 68rem;
+  /* Base spacing */
+  --spacing-sm: .5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  /* Colors */
+  --color-background: #FFFFFF;
+  --color-background-highlight: #ECFCFF;
+  --color-background-inverse: #6867AC;
+  --color-borders: #DCE3E8;
+  --color-action: #007AB8;
+  --color-highlight: #9e57bc;
+  --color-text: #1E2A31;
+  --color-text-inverse: #FFFFF9;
+  --color-text-light: #6a737d;
+  /* Extra colors for the syntax highlighting */
+  --color-sh-highlighted-background: #ccf0f7;
+  --color-sh-property-color: #a13cea;
+  --color-sh-value-color: #269a12;
+  --color-sh-variable-color: #a8560d;
+  --color-sh-function-color: #dd3d7a;
+  --color-sh-important-color: #f72a57;
+}
+
+/* Dark theme */
+html.dark {
+  /* Colors */
+  --color-background: #1E2A31;
+  --color-background-highlight: #20415C;
+  --color-background-inverse: #4380B1; /* #24567E */
+  --color-borders: #374C5C;
+  --color-action: #16AAF5;
+  --color-highlight: #d074f7;
+  --color-text: #FFF;
+  --color-text-inverse: #D8E8F1; /* #BADAFC */
+  --color-text-light: #adbec2;
+  /* Extra colors for the syntax highlighting */
+  --color-sh-inline-code-color: #d794f4;
+  --color-sh-highlighted-background: #ccf0f7;
+  --color-sh-property-color: #d790ff;
+  --color-sh-value-color: #53c73f;
+  --color-sh-variable-color: #ee9e2e;
+  --color-sh-function-color: #ff82b2;
+  --color-sh-important-color: #f72a57;
+}
+
+.header,
+.section,
+.footer {
+  margin: 0 auto;
+  max-width: var(--content-width);
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
+}
+
+@media screen and (min-width: 68rem) {
+  .header,
+  .section,
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  transition: color 0.125s ease-in-out, background-color 0.125s ease-in-out;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+a {
+  transition: color 0.1s ease-in-out;
+}
+
+/* Any part of the site that includes content */
+.title {
+  font-size: 2rem;
+}
+
+.theme-button {
+  color: var(--color-text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  height: 1.7rem;
+  padding: 0;
+}
+.theme-button__dark {
+  display: none;
+}
+
+html.dark .theme-button__light {
+  display: none;
+}
+html.dark .theme-button__dark {
+  display: block;
+}

@@ -1,0 +1,64 @@
+/*
+ * Copyright 2022 VMware, Inc.
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
+.hero {
+  display: grid;
+  margin: 5rem auto;
+  max-width: 960px;
+  text-align: center;
+}
+
+.hero__top,
+.hero__anywhere,
+.hero__wasm {
+  display: block;
+}
+
+.hero__top,
+.hero__anywhere {
+  margin-bottom: var(--spacing-sm);
+}
+
+.hero__top {
+  font-size: 2.25rem;
+}
+
+.hero__anywhere {
+  font-weight: bold;
+  font-size: 3.5rem;
+}
+
+.hero__wasm {
+  font-size: 2rem;
+  color: var(--color-highlight);
+  margin-bottom: var(--spacing-lg);
+}
+
+@media screen and (min-width: 760px) {
+  .hero {
+    text-align: left;
+    grid-template-columns: 50% 50%;
+    align-items: center;
+  }
+
+  .hero__illustration {
+    text-align: center;
+    position: relative;
+    top: .5rem;
+  }
+
+  .hero__top {
+    font-size: 3.3rem;
+  }
+
+  .hero__anywhere {
+    font-size: 5.5rem;
+  }
+
+  .hero__wasm {
+    font-size: 2.9rem;
+    margin-bottom: 0;
+  }
+}

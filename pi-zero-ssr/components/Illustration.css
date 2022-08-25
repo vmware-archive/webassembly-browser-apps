@@ -1,0 +1,45 @@
+/*
+ * Copyright 2022 VMware, Inc.
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
+.illustration {
+  width: 350px;
+}
+
+.illustration--perspective {
+  transform: rotateX(10deg);
+}
+
+.illustration--animate {
+  animation: 3s ease-in-out infinite alternate swing;
+}
+
+.illustration--animate .illustration__chips {
+  animation: 5s ease-in-out 1s infinite alternate blink;
+}
+
+
+@keyframes swing {
+  from {
+    transform: perspective(300px) rotate3d(30,25,5,13deg);
+  }
+
+  to {
+    transform: perspective(500px) rotate3d(-10,-30,10,13deg);
+  }
+}
+
+@keyframes blink {
+  0% {
+    fill: var(--color-highlight);
+  }
+
+  25% {
+    fill: #3E3535;
+  }
+
+  100% {
+    fill: #3E3535;
+  }
+}

@@ -4,8 +4,7 @@ This repository contains a group of projects that highlights different capabitil
 
 Every project includes a `README.md` file with the description, scope and documentation. Please, check the different folders to try the different projects we built:
 
-* TBD
-* TBD
+* [Modern Websites on a Raspberry Pi Zero W](https://github.com/vmware-samples/webassembly-browser-apps/tree/main/pi-zero-ssr)
 
 ## Contributing
 
