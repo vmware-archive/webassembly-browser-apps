@@ -1,29 +1,20 @@
-# webassembly-browser-apps
+# WebAssembly Browser Applications
 
-## Overview
+This repository contains a group of projects that highlights different capabitilies and features of [WebAssembly](https://webassembly.org/).
 
-## Try it out
+Every project includes a `README.md` file with the description, scope and documentation. Please, check the different folders to try the different projects we built:
 
-### Prerequisites
-
-* Prereq 1
-* Prereq 2
-* Prereq 3
-
-### Build & Run
-
-1. Step 1
-2. Step 2
-3. Step 3
-
-## Documentation
+* TBD
+* TBD
 
 ## Contributing
 
-The webassembly-browser-apps project team welcomes contributions from the community. Before you start working with webassembly-browser-apps, please
-read our [Developer Certificate of Origin](https://cla.vmware.com/dco). All contributions to this repository must be
-signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on
-as an open-source patch. For more detailed information, refer to [CONTRIBUTING.md](CONTRIBUTING.md).
+The webassembly-browser-apps project team welcomes contributions from the community. Before you start working with `webassembly-browser-apps`, please read our [Developer Certificate of Origin](https://cla.vmware.com/dco). All contributions to this repository must be signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on as an open-source patch. For more detailed information, refer to [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Team
+
+You can find all our projects and articles in <https://wasmlabs.dev>. You can also follow our [@vmwwasm Twitter account](https://twitter.com/vmwwasm) to stay up to date.
 
 ## License
 
+Please check the LICENSE file in this repository.
