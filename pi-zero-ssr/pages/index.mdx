@@ -1,0 +1,35 @@
+import Hero from "../components/Hero";
+import Follow from "../components/Follow";
+import { Link } from "preact-router";
+import Diagram from "../components/Diagram";
+import Project, { ProjectItem } from "../components/Project";
+import Block from "../components/Block";
+
+<Hero />
+<Block id="project" title="An experiment by Wasm Labs" action>
+  <Project>
+    <ProjectItem>
+      You may think this looks like a regular site, and **you are right**. We wanted to create a site using modern tools and techniques, including Server Side Rendering (SSR) and run it in a particular environment.
+
+      - It's based on modern frameworks and tools: [Preact](https://preactjs.com/), [Vite](https://vitejs.dev/) and [MDX](https://mdxjs.com/)
+      - It prerenders the initial content using [Server Side Rendering (SSR)](https://web.dev/rendering-on-the-web/)
+      - The SSR logic runs inside a WebAssembly module by embedding the [QuickJS](https://bellard.org/quickjs/) runtime (using [Javy](https://github.com/Shopify/javy))
+      - The WebAssembly runtime we used is [Wazero](https://wazero.io/)
+      - **It runs in a [Raspberry Pi Zero W](https://www.raspberrypi.com/products/raspberry-pi-zero-w/) (BCM2835 / ARM 32-Bits 1GHz)**
+
+      Everything brought to you by the Wasm Labs @ VMware OCTO team.
+    </ProjectItem>
+    <ProjectItem>
+      <Diagram />
+    </ProjectItem>
+  </Project>
+</Block>
+
+<Block id="navigate" title="Navigate through the site">
+  We created a set of sample pages:
+
+  - <Link href="/about">About us</Link>
+  - <Link href="/projects">Other projects</Link>
+</Block>
+
+<Follow />

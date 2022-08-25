@@ -1,0 +1,20 @@
+/*
+ * Copyright 2022 VMware, Inc.
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
+.project .project__item:first-child {
+  margin-bottom: 1rem;
+}
+
+@media screen and (min-width: 760px) {
+  .project {
+    display: grid;
+    gap: var(--spacing-xl);
+    grid-template-columns: 50% 50%;
+  }
+
+  .project .project__item:first-child {
+    margin-bottom: 0;
+  }
+}

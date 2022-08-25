@@ -1,0 +1,45 @@
+/*
+ * Copyright 2022 VMware, Inc.
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
+.follow {
+  margin: 7rem var(--spacing-xl);
+  text-align: center;
+  position: relative;
+}
+
+.follow:before {
+  background: radial-gradient(circle, var(--color-action) 0%, var(--color-background) 50%);
+  position: absolute;
+  content: "";
+  height: 20rem;
+  width: 20rem;
+  left: 50%;
+  top: 50%;
+  opacity: .25;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: -1;
+}
+
+.follow a {
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: .8rem;
+  display: inline-flex;
+  background-color: var(--color-action);
+  color: var(--color-text-inverse);
+  border: 3px solid var(--color-action);
+  padding: var(--spacing-md) var(--spacing-lg);
+  box-shadow: 10px 10px 0 0 var(--color-background-highlight);
+  text-decoration: none;
+  transition: all .125s ease-in-out;
+  will-change: transform;
+}
+
+.follow a:hover {
+  color: var(--text-color);
+  background-color: var(--color-background);
+  border-color: var(--color-highlight);
+  transform: translateY(-.3rem);
+}
