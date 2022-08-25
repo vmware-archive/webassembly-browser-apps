@@ -74,7 +74,7 @@ scp ./build.tar.gz pi@PI_ZERO_IP_ADDRESS:~
 # SSH into the Raspberry Pi
 ssh pi@PI_ZERO_IP_ADDRESS
 tar xvf build.tar.gz
-./ssr-handler ./ssr.wasm
+./ssr-handler ./ssr.wasm ./dist
 ```
 
 Then, you can access to the site in <http://PI_ZERO_IP_ADDRESS:8080>.
