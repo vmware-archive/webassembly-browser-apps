@@ -6,7 +6,7 @@ This project is a PreactJS application running in the browser (client) and a ser
 * [Vite](https://vitejs.dev/)
 * [MDX](https://mdxjs.com/)
 
-The challenge of this project was to run the server inside a [Raspberry Pi Zero W](https://www.raspberrypi.com/products/raspberry-pi-zero-w/). This small board integrates a BCM2835 (ARM 32-Bits / 1GHz) chipset and 512MB of SRAM. These restrictions made it an interesting project.
+The challenge of this project was to run the server inside a [Raspberry Pi Zero W](https://www.raspberrypi.com/products/raspberry-pi-zero-w/) and [Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/). These small boards integrate a BCM2835 (ARM 32-Bits / 1GHz) and BCM2710A1 (ARM 64-bits / Quad core 1GHz) respectively. Both include 512MB of SRAM. These restrictions make them an interesting project.
 
 These are the details of the SSR logic:
 
@@ -56,17 +56,20 @@ This project is composed by different parts. This section aims to introduce them
 * The `handler` folder includes the Go HTTP handler and runtime. This project uses [Wazero](https://wazero.io/) to instantiate and run the WebAssembly module
 * The `Makefile` calls the different tools to build the project
 
-## Deployment to a Raspberry Pi Zero W
+## Deployment to a Raspberry Pi Zero
 
 To deploy this project to a Raspberry Pi Zero W, you need first to compile it. For that, you will need a Linux machine that includes the tooling in the "Prerequisites" section.
 
 Then, run the following command:
 
 ```
+# 32-bits / Raspberry Pi Zero
 make build
+# 64-bits / Raspberry Pi Zero 2
+make build-64
 ```
 
-This command will create a final `build.tar.gz` file in the project root folder. Then, you need to run the following commands to start serving the site in the Raspberry Pi Zero W:
+This command will create a final `build.tar.gz` file in the project root folder. Then, you need to run the following commands to start serving the site in the Raspberry Pi Zero 1 / 2:
 
 ```
 scp ./build.tar.gz pi@PI_ZERO_IP_ADDRESS:~
@@ -79,7 +82,7 @@ tar xvf build.tar.gz
 
 Then, you can access to the site in <http://PI_ZERO_IP_ADDRESS:8080>.
 
-Note that it takes some time to boot the server (~10s) and to prerender the pages (~5-15s). This is one of the further exploration topics around this project.
+Note that it takes some time to boot the server and to prerender the pages. This is one of the further exploration topics around this project.
 
 ## Let's keep in touch
 
