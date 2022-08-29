@@ -2,6 +2,8 @@ all: build
 
 build: build-client build-ssr build-handler pack
 
+build-64: build-client build-ssr build-handler-64 pack
+
 dev: build-client build-ssr build-handler-dev run
 
 build-client:
@@ -15,6 +17,9 @@ build-handler-dev:
 
 build-handler:
 	make -C ./handler build && mv ./handler/ssr-handler ./
+
+build-handler-64:
+	make -C ./handler build-64 && mv ./handler/ssr-handler ./
 
 pack:
 	tar czf build.tar.gz ssr-handler ssr.wasm dist
