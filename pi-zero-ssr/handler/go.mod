@@ -1,4 +1,4 @@
-module handler
+module ssr-handler
 
 go 1.17
 

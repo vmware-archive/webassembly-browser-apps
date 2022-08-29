@@ -1,6 +1,5 @@
 dist*
 node_modules
-handler
 ssr-handler
 ssr.wasm
 *.tar.gz
