@@ -13,16 +13,16 @@ build-ssr:
 	npm run build:ssr && javy ./dist-ssr/zero-wasm-demo.js -o ./ssr.wasm
 
 build-handler-dev:
-	make -C ./handler build-dev && mv ./handler/ssr-handler ./
+	make -C ./handler build-dev && mv ./handler/handler ./
 
 build-handler:
-	make -C ./handler build && mv ./handler/ssr-handler ./
+	make -C ./handler build && mv ./handler/handler ./
 
 build-handler-64:
-	make -C ./handler build-64 && mv ./handler/ssr-handler ./
+	make -C ./handler build-64 && mv ./handler/handler ./
 
 pack:
-	tar czf build.tar.gz ssr-handler ssr.wasm dist
+	tar czf build.tar.gz handler ssr.wasm dist
 
 run:
-	./ssr-handler ./ssr.wasm ./dist
+	./handler ./ssr.wasm ./dist
