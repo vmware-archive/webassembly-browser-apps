@@ -45,7 +45,7 @@ func main() {
   }
 
   // Compile module for run boost!
-  compiled, err := r.CompileModule(ctx, wasm, wazero.NewCompileConfig())
+  compiled, err := r.CompileModule(ctx, wasm)
   if err != nil {
     log.Panicln(err)
   }
