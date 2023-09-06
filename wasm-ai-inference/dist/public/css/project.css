@@ -1,0 +1,28 @@
+.title {
+  margin-top: 4rem;
+}
+
+.description p {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  max-width: 50rem;
+}
+
+.button {
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#output {
+  background-color: var(--color-light-gray);
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.4;
+  padding: 2rem;
+  min-height: 265px;
+  border-radius: 5px;
+}
+
+.dark #output {
+  background-color: var(--color-background-highlight);
+}

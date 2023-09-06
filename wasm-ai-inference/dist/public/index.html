@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Run Llama 2 models in the browser with WebAssembly</title>
+  <link rel="icon" href="/favicon.svg">
+
+  <!-- Preload images to avoid CLS -->
+  <link rel="preload" href="/fonts/Metropolis-regular.woff2" type="font/woff2" as="font" crossorigin>
+  <link rel="preload" href="/fonts/Metropolis-medium.woff2" type="font/woff2" as="font" crossorigin>
+
+  <!-- Theme switcher -->
+  <script>
+    // Global properties and helpers
+    window.SITE_THEME = {
+      key: "mode",
+      light: "light",
+      dark: "dark",
+      enableDark: (button) => {
+        const darkLink = document.documentElement.classList.add("dark");
+        if (button) {
+          button.setAttribute("aria-pressed", true)
+        }
+      },
+      disableDark: (button) => {
+        const darkLink = document.documentElement.classList.remove("dark");
+        if (button) {
+          button.setAttribute("aria-pressed", false)
+        }
+      }
+    };
+
+    // Identify style based on system preferences
+    const isSystemDarkMode =
+      matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+    // Get color from localStorage
+    const currentValue = localStorage.getItem(SITE_THEME.key);
+    if (currentValue === SITE_THEME.dark || (currentValue == null && isSystemDarkMode)) {
+      SITE_THEME.enableDark();
+    }
+  </script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/project.css">
+</head>
+
+<body>
+  <header class="header">
+    <div class="header__content">
+      <h1 class="header__home">
+        <a href="/">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 614.8 223"
+            style="enable-background:new 0 0 614.8 223" xml:space="preserve">
+            <path fill="currentColor"
+              d="m283.2 143.2-21.4-59.5c-.3-.8-.7-1.9-.7-2.9 0-2.6 2.2-5 5.3-5 2.7 0 4.5 1.8 5.3 4.4l17.7 51.3 17.8-51.4c.8-2.4 2.5-4.2 5.2-4.2h.5c2.9 0 4.6 1.8 5.5 4.2l17.7 51.4 18-51.5c.7-2.2 2.2-4.1 5-4.1 3 0 5.2 2.3 5.2 4.9 0 1-.4 2-.7 2.9l-21.5 59.6c-1.1 3.1-3.3 4.7-5.7 4.7h-.4c-2.7 0-4.8-1.6-5.7-4.7l-17.5-50.6-17.7 50.6c-.9 3.1-3 4.7-5.7 4.7h-.3c-2.6 0-4.8-1.6-5.9-4.8M439 81c0-2.9 2.3-5.3 5.2-5.3 3 0 5.3 2.3 5.3 5.3v12.1c5.2-11.7 16.7-17.3 24.3-17.3 3.1 0 5.2 2.3 5.2 5.3 0 2.9-1.9 4.9-4.6 5.3-13.6 1.6-24.8 11.9-24.8 32.2v23.9c0 2.9-2.2 5.3-5.2 5.3s-5.3-2.3-5.3-5.3V81M512.7 148.6c-19 0-34.5-14.7-34.5-36.3v-.3c0-20.1 14-36.3 33.1-36.3 20.4 0 32.1 16.9 32.1 35.4 0 2.8-2.3 4.9-4.8 4.9h-50c1.5 15.1 12 23.6 24.3 23.6 8.6 0 14.8-3.4 19.9-8.1.8-.7 1.7-1.2 2.9-1.2 2.5 0 4.5 2 4.5 4.5 0 1.2-.5 2.4-1.6 3.4-6.4 6.2-14.1 10.4-25.9 10.4m20.4-40.4c-1.1-12.7-8.3-23.8-22-23.8-12 0-21.1 10.1-22.4 23.8h44.4zM364.6 126.7v-.3c0-14.8 12.2-22.7 30-22.7 9 0 15.4 1.2 21.6 3v-2.4c0-12.6-7.8-19.2-20.9-19.2-7.1 0-11.2.9-16.4 3.2-.7.3-1.4.4-1.9.4-2.5 0-4.6-2-4.6-4.5 0-2.2 1-3.5 2.9-4.4 6.9-3 12.1-4 21.1-4 9.9 0 17.5 2.6 22.7 7.7 4.8 4.8 7.2 11.6 7.2 20.5v38.8c0 3-2.2 5.2-5 5.2-3 0-5-2.2-5-4.9v-6.7c-4.9 6.4-13.1 12.1-25.4 12.1-13.1.1-26.3-7.4-26.3-21.8m51.8-5.4v-6.8c-5.2-1.5-12.1-3-20.7-3-13.2 0-20.5 5.7-20.5 14.6v.3c0 8.8 8.2 14 17.7 14 12.9-.1 23.5-8 23.5-19.1M92.8 80.3c-2.3-5-8-7.3-13.3-5-5.3 2.4-7.3 8.3-4.9 13.3l22.3 48.5c3.5 7.6 7.2 11.6 14.1 11.6 7.4 0 10.6-4.3 14.2-11.6 0 0 19.5-42.4 19.7-42.8.2-.5.8-1.8 2.8-1.8 1.7 0 3.1 1.4 3.1 3.1v41.5c0 6.4 3.5 11.6 10.4 11.6 6.8 0 10.5-5.2 10.5-11.6v-33.9c0-6.5 4.7-10.8 11.1-10.8 6.4 0 10.6 4.4 10.6 10.8v33.9c0 6.4 3.6 11.6 10.4 11.6 6.8 0 10.5-5.2 10.5-11.6v-33.9c0-6.5 4.7-10.8 11.1-10.8 6.4 0 10.6 4.4 10.6 10.8v33.9c0 6.4 3.5 11.6 10.4 11.6 6.8 0 10.5-5.2 10.5-11.6V98.5c0-14.2-11.4-24.1-25.1-24.1-13.7 0-22.3 9.5-22.3 9.5-4.6-5.9-10.9-9.5-21.5-9.5-11.2 0-21.1 9.5-21.1 9.5-4.6-5.9-12.3-9.5-18.8-9.5-10 0-17.9 4.4-22.7 15.4L111 123.4 92.8 80.3M544.3 84.5c0-4.8 3.8-8.8 8.7-8.8 4.9 0 8.7 4 8.7 8.7 0 4.8-3.8 8.8-8.7 8.8-4.9 0-8.7-4-8.7-8.7m15.7-.1c0-3.9-3-7.1-7-7.1s-7 3.2-7 7.1v.1c0 3.9 3 7.1 7 7.1 4-.1 7-3.3 7-7.2" />
+            <path fill="currentColor"
+              d="M549.7 81c0-.5.4-.9.9-.9h2.9c1.1 0 1.9.3 2.5.9.5.5.7 1.1.7 1.9 0 1.3-.7 2.1-1.7 2.6l1.3 1.6c.2.2.3.4.3.7 0 .5-.4.9-.9.9-.4 0-.7-.2-.9-.5l-1.8-2.3h-1.5v1.8c0 .5-.4.9-.9.9s-.9-.4-.9-.9V81zm3.7 3.1c.9 0 1.4-.5 1.4-1.2 0-.8-.5-1.2-1.4-1.2h-1.8v2.4h1.8z" />
+          </svg>
+          <span>Wasm Labs</span>
+        </a>
+      </h1>
+      <nav class="header__nav">
+        <ul>
+          <li>
+            <a href="https://wasmlabs.dev">
+              Wasm Labs site
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/vmware-samples/webassembly-browser-apps">
+              Source Code
+            </a>
+          </li>
+          <li>
+            <button id="switch-theme" class="theme-button" aria-label="Dark Theme" aria-pressed="false">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="theme-button__dark">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="theme-button__light">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <h1 class="title">Llama 2 in the browser with WebAssembly</h1>
+      <div class="description">
+        <p>
+          <a href="https://ai.meta.com/llama/" rel="noopener noreferrer">Llama 2</a> is a new Machine Learning (ML)
+          architecture and a set of pretrained Large Language Models (LLMs) that revolutionized the AI ecosystem. Thanks
+          to its architecture, <a href="https://twitter.com/karpathy/status/1691571869051445433"
+            rel="noopener noreferrer"><b>you can run inference on these LLMs in a regular computer</b></a>.
+        </p>
+        <p>
+          Projects like <a href="https://github.com/karpathy/llama2.c" rel="noopener noreferrer">llama2.c</a> from <a
+            href="https://karpathy.ai/">Andrej Karpathy</a> took a step forward by implementing an entire inference
+          engine
+          in a single C file. Thanks to this implementation, we can compile it to a Wasm module that runs almost
+          anywhere. From a RISC-V board to the brower in your laptop or mobile phone.
+        </p>
+        <p>
+          You can try it in your browser. In this demo, you will run the <a
+            href="https://huggingface.co/karpathy/tinyllamas/tree/main" rel="noopener noreferrer">TinyLlamas</a> model
+          direcly in your browser 👇
+        </p>
+      </div>
+
+      <button class="button" id="toggle-inference">Run inference</button>
+
+      <p id="output"></p>
+
+    </section>
+    <section class="section">
+      <h2>Run it anywhere</h2>
+      <div class="description">
+        <p>You can run the same exact module in other environments. For example, the following code runs it using
+          Wasmtime and WasmEdge:</p>
+      </div>
+      <h3>Wasmtime</h3>
+      <pre class="language-shell-session"><code class="language-shell-session"><span class="token output">mkdir model && \
+  wget -O llama2-c.wasm --no-clobber https://inference.wasmlabs.dev/llama2-c.wasm && \
+  wget -O model/model.bin --no-clobber https://huggingface.co/karpathy/tinyllamas/resolve/main/stories260K/stories260K.bin && \
+  wget -O model/tokenizer.bin --no-clobber https://huggingface.co/karpathy/tinyllamas/resolve/main/stories260K/tok512.bin && \
+  wasmtime run --mapdir /::$(pwd)/model ./llama2-c.wasm -- model.bin -t 0.9</span></code></pre>
+      <h3>WasmEdge</h3>
+      <pre class="language-shell-session"><code class="language-shell-session"><span class="token output">mkdir model && \
+  wget -O llama2-c.wasm --no-clobber https://inference.wasmlabs.dev/llama2-c.wasm && \
+  wget -O model/model.bin --no-clobber https://huggingface.co/karpathy/tinyllamas/resolve/main/stories260K/stories260K.bin && \
+  wget -O model/tokenizer.bin --no-clobber https://huggingface.co/karpathy/tinyllamas/resolve/main/stories260K/tok512.bin && \
+  wasmedge --dir /:$(pwd)/model ./llama2-c.wasm -- model.bin -t 0.9</span></code></pre>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__content">
+      <div class="footer__logo">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 614.8 223"
+          style="enable-background:new 0 0 614.8 223" xml:space="preserve">
+          <path fill="currentColor"
+            d="m283.2 143.2-21.4-59.5c-.3-.8-.7-1.9-.7-2.9 0-2.6 2.2-5 5.3-5 2.7 0 4.5 1.8 5.3 4.4l17.7 51.3 17.8-51.4c.8-2.4 2.5-4.2 5.2-4.2h.5c2.9 0 4.6 1.8 5.5 4.2l17.7 51.4 18-51.5c.7-2.2 2.2-4.1 5-4.1 3 0 5.2 2.3 5.2 4.9 0 1-.4 2-.7 2.9l-21.5 59.6c-1.1 3.1-3.3 4.7-5.7 4.7h-.4c-2.7 0-4.8-1.6-5.7-4.7l-17.5-50.6-17.7 50.6c-.9 3.1-3 4.7-5.7 4.7h-.3c-2.6 0-4.8-1.6-5.9-4.8M439 81c0-2.9 2.3-5.3 5.2-5.3 3 0 5.3 2.3 5.3 5.3v12.1c5.2-11.7 16.7-17.3 24.3-17.3 3.1 0 5.2 2.3 5.2 5.3 0 2.9-1.9 4.9-4.6 5.3-13.6 1.6-24.8 11.9-24.8 32.2v23.9c0 2.9-2.2 5.3-5.2 5.3s-5.3-2.3-5.3-5.3V81M512.7 148.6c-19 0-34.5-14.7-34.5-36.3v-.3c0-20.1 14-36.3 33.1-36.3 20.4 0 32.1 16.9 32.1 35.4 0 2.8-2.3 4.9-4.8 4.9h-50c1.5 15.1 12 23.6 24.3 23.6 8.6 0 14.8-3.4 19.9-8.1.8-.7 1.7-1.2 2.9-1.2 2.5 0 4.5 2 4.5 4.5 0 1.2-.5 2.4-1.6 3.4-6.4 6.2-14.1 10.4-25.9 10.4m20.4-40.4c-1.1-12.7-8.3-23.8-22-23.8-12 0-21.1 10.1-22.4 23.8h44.4zM364.6 126.7v-.3c0-14.8 12.2-22.7 30-22.7 9 0 15.4 1.2 21.6 3v-2.4c0-12.6-7.8-19.2-20.9-19.2-7.1 0-11.2.9-16.4 3.2-.7.3-1.4.4-1.9.4-2.5 0-4.6-2-4.6-4.5 0-2.2 1-3.5 2.9-4.4 6.9-3 12.1-4 21.1-4 9.9 0 17.5 2.6 22.7 7.7 4.8 4.8 7.2 11.6 7.2 20.5v38.8c0 3-2.2 5.2-5 5.2-3 0-5-2.2-5-4.9v-6.7c-4.9 6.4-13.1 12.1-25.4 12.1-13.1.1-26.3-7.4-26.3-21.8m51.8-5.4v-6.8c-5.2-1.5-12.1-3-20.7-3-13.2 0-20.5 5.7-20.5 14.6v.3c0 8.8 8.2 14 17.7 14 12.9-.1 23.5-8 23.5-19.1M92.8 80.3c-2.3-5-8-7.3-13.3-5-5.3 2.4-7.3 8.3-4.9 13.3l22.3 48.5c3.5 7.6 7.2 11.6 14.1 11.6 7.4 0 10.6-4.3 14.2-11.6 0 0 19.5-42.4 19.7-42.8.2-.5.8-1.8 2.8-1.8 1.7 0 3.1 1.4 3.1 3.1v41.5c0 6.4 3.5 11.6 10.4 11.6 6.8 0 10.5-5.2 10.5-11.6v-33.9c0-6.5 4.7-10.8 11.1-10.8 6.4 0 10.6 4.4 10.6 10.8v33.9c0 6.4 3.6 11.6 10.4 11.6 6.8 0 10.5-5.2 10.5-11.6v-33.9c0-6.5 4.7-10.8 11.1-10.8 6.4 0 10.6 4.4 10.6 10.8v33.9c0 6.4 3.5 11.6 10.4 11.6 6.8 0 10.5-5.2 10.5-11.6V98.5c0-14.2-11.4-24.1-25.1-24.1-13.7 0-22.3 9.5-22.3 9.5-4.6-5.9-10.9-9.5-21.5-9.5-11.2 0-21.1 9.5-21.1 9.5-4.6-5.9-12.3-9.5-18.8-9.5-10 0-17.9 4.4-22.7 15.4L111 123.4 92.8 80.3M544.3 84.5c0-4.8 3.8-8.8 8.7-8.8 4.9 0 8.7 4 8.7 8.7 0 4.8-3.8 8.8-8.7 8.8-4.9 0-8.7-4-8.7-8.7m15.7-.1c0-3.9-3-7.1-7-7.1s-7 3.2-7 7.1v.1c0 3.9 3 7.1 7 7.1 4-.1 7-3.3 7-7.2" />
+          <path fill="currentColor"
+            d="M549.7 81c0-.5.4-.9.9-.9h2.9c1.1 0 1.9.3 2.5.9.5.5.7 1.1.7 1.9 0 1.3-.7 2.1-1.7 2.6l1.3 1.6c.2.2.3.4.3.7 0 .5-.4.9-.9.9-.4 0-.7-.2-.9-.5l-1.8-2.3h-1.5v1.8c0 .5-.4.9-.9.9s-.9-.4-.9-.9V81zm3.7 3.1c.9 0 1.4-.5 1.4-1.2 0-.8-.5-1.2-1.4-1.2h-1.8v2.4h1.8z" />
+        </svg>
+      </div>
+      <div class="footer__links">
+        <p>
+          &copy; 2023 <a href="https://vmware.com">VMware, Inc</a>
+        </p>
+        <p>
+          <a href="https://www.vmware.com/help/legal.html">Terms of Use</a>
+        </p>
+        <p>
+          <a href="https://www.vmware.com/help/privacy/california-privacy-rights.html">
+            Your California Rights
+          </a>
+        </p>
+        <p>
+          <a href="https://www.vmware.com/help/privacy.html">Privacy</a>
+        </p>
+        <p>
+          <a href="https://www.vmware.com/help/accessibility.html">
+            Accessibility
+          </a>
+        </p>
+        <p>
+          <a href="https://www.vmware.com/help/trademarks.html">
+            Trademarks
+          </a>
+        </p>
+        <p class="footer__social">
+          <a href="https://twitter.com/intent/user?screen_name=vmwwasm" aria-label="Follow us on Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+              <path fill="currentColor"
+                d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z" />
+            </svg>
+          </a>
+          <a href="https://github.com/vmware-labs" aria-label="Find all our code in VMware Labs">
+            <svg xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+              <path fill="currentColor"
+                d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z" />
+            </svg>
+          </a>
+          <a href="https://github.com/vmware-labs" aria-label="Check our videos on YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+              <path fill="currentColor"
+                d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z" />
+            </svg>
+          </a>
+        </p>
+      </div>
+    </div>
+    <div class="footer__content">
+      <p><i>This Website does not use Cookies or any personally identifiable user data.</i></p>
+    </div>
+  </footer>
+  <script src="/js/theme.js"></script>
+  <script type="module" src="/js/index.js"></script>
+</body>
+
+</html>
