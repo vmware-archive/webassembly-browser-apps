@@ -1,0 +1,3 @@
+[submodule "wasm-ai-inference/llama2.c"]
+	path = wasm-ai-inference/llama2.c
+	url = https://github.com/karpathy/llama2.c.git
